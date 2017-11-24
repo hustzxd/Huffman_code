@@ -1,4 +1,6 @@
-#Huffman_code
+# Huffman_code
+
+Inspired by [mirob2005](https://github.com/mirob2005/Huffman_Code)
 
 `python compress.py src_file dst_file`
 
