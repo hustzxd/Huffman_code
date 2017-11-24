@@ -6,6 +6,12 @@ class Node:
         self.right = right
         self.code = code
 
+    def set_value(self, v):
+        self.value = v
+
+    def set_key(self, k):
+        self.key = k
+
     def __str__(self):
         return 'key: ({}), value: ({}) code: ({}) left: ({}) right: ({})' \
             .format(self.key, self.value, self.code, self.left, self.right)

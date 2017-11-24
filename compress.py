@@ -2,6 +2,7 @@ import sys
 import os
 from util.BinaryHeap import BinaryHeap
 from util.Node import Node
+import time
 
 
 def compress(src, dst):
@@ -13,11 +14,12 @@ def compress(src, dst):
                 nodes[c].value += 1
             else:
                 nodes[c] = Node(c, 1)
-
+    print('nodes complete')
     # Add in psuedo-EOF marker symbol
     # EOF = chr(255) + chr(255)
     # nodes[EOF] = Node(EOF, 1)
     num = len(nodes)  # maximum is 255, so 8 bits is enough.
+    print('num: {}'.format(num))
     num_code = bin(num)[2:]
     while len(num_code) != 8:
         num_code = '0' + num_code
@@ -46,15 +48,24 @@ def compress(src, dst):
     while len(result) % 8 != 0:
         cnt += 1
         result += '0'
+    print('cnt: {}'.format(cnt))
     cnt_code = bin(cnt)[2:]
     while len(cnt_code) != 8:
         cnt_code = '0' + cnt_code
     result = cnt_code + result
 
+    # with open('debug.txt', 'w') as f:
+    #    f.write(result)
     hexGrp = []
-    while result:
-        hexGrp.append(result[:8])
-        result = result[8:]
+    # while result:
+    #     hexGrp.append(result[:8])
+    #     result = result[8:]
+    # Cost too much time.
+    i = 0
+    while i < len(result):
+        hexGrp.append(result[i:i + 8])
+        i += 8
+    print('Generate hex_group done.')
     # print(hexGrp)
     output = bytearray([int(group, 2) for group in hexGrp])
     with open(dst, 'wb') as wbf:
@@ -87,7 +98,10 @@ if __name__ == '__main__':
         exit()
     if os.path.exists(sys.argv[1]):
         src_size = os.stat(sys.argv[1]).st_size
+        start = time.time()
         compress(sys.argv[1], sys.argv[2])
+        end = time.time()
+        print('time cost:{}s'.format(end - start))
         dst_size = os.stat(sys.argv[2]).st_size
         print('Src file size: {}\nDst file size: {}\nPercent Space saved:{:.2f}% '
               .format(src_size, dst_size, (1.0 - float(dst_size) / src_size) * 100))
